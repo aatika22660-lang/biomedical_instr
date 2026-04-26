@@ -78,3 +78,51 @@ def random_edge_position(grid_size=GRID_SIZE, rng=None):
     if edge == 1:  return (grid_size - 1, coord)
     if edge == 2:  return (coord, 0)
     return (coord, grid_size - 1)
+
+
+def random_perilesional_position(grid_size=GRID_SIZE, spawn_radius=30, rng=None):
+    """
+    Return a random (x, y) position within the perilesional injection zone.
+
+    Biological justification: clinical MuSC delivery targets the perilesional
+    region — tissue immediately surrounding the injury — not distant injection
+    sites. Spawning agents at radius ~30 grid units (~12 mm from injury centre)
+    ensures they are within the detectable HGF gradient from step 1, making
+    navigational noise the primary determinant of targeting success.
+
+    Parameters
+    ----------
+    grid_size    : int                 — side length of the square grid
+    spawn_radius : int                 — approximate distance from grid centre
+                                         to spawn ring (grid units)
+    rng          : np.random.Generator — caller-supplied RNG for reproducibility.
+                                         Raises ValueError if None.
+
+    Returns
+    -------
+    (x, y) : tuple of int — grid position on perilesional ring
+    """
+    if rng is None:
+        raise ValueError(
+            "random_perilesional_position() requires an explicit rng. "
+            "Pass a np.random.default_rng(seed) instance."
+        )
+
+    cx, cy = grid_size // 2, grid_size // 2
+
+    # Random angle around the injury centre
+    angle = rng.uniform(0, 2 * np.pi)
+
+    # Jitter the radius slightly so agents don't form a perfect ring
+    # ± 5 grid units variation around spawn_radius
+    r = spawn_radius + rng.integers(-5, 6)
+    r = max(10, min(r, grid_size // 2 - 2))  # clamp — never too close or outside grid
+
+    x = int(round(cx + r * np.cos(angle)))
+    y = int(round(cy + r * np.sin(angle)))
+
+    # Final clamp to grid bounds
+    x = max(0, min(grid_size - 1, x))
+    y = max(0, min(grid_size - 1, y))
+
+    return (x, y)

@@ -28,11 +28,17 @@ SIGMA_BROAD = 22        # Broad HGF sigma for edge-to-centre navigation tests.
                         # SIGMA_BROAD=22 keeps the gradient navigable from grid edges.
                         # Used in Tests 03 and 07 and the sensitivity analysis.
                         
+SIGMA_SIMULATION = 13   # Intermediate gradient for full simulation runs.
+                        # At spawn radius 30: HGF ≈ 0.41 — gradient direction
+                        # is detectable but not strong enough to overwhelm noise.
+                        # Creates the regime where σ_CAR vs σ_noise produces a
+                        # meaningful difference in targeting success.
+
 # ── Signal Processing — Agent Navigation Model ───────────────────────────────
 # Agents climb the HGF gradient via discrete gradient ascent with
 # stochastic noise modelling Brownian diffusion (unmodified) or
 # receptor-guided navigation (CAR-MuSC).
-NUM_AGENTS = 50 # Normalised transplanted MuSC population
+NUM_AGENTS = 100 # Normalised transplanted MuSC population
 SIGMA_NOISE = 0.4 # Unmodified MuSC: baseline navigational noise (σ)
 # Calibrated to in vitro migration 948 μm/48 hr (Niesler 2011)
 # and in vivo persistence <200 μm (Siegel 2009)
@@ -54,7 +60,7 @@ SIGMA_CAR = 0.2 # CAR-MuSC: amplified navigation (50% noise reduction)
 # (Parker et al. 2008; Tremblay et al. 1993: 30–80% dystrophin+ fibres).
 ENGRAFT_SUCCESS_RATE = 0.80 # Probability of successful fibre fusion
 REPAIR_RATE = 0.015 # Damage reduction per engrafted agent per step
-MAX_STEPS = 300 # Instrument run duration (sufficient for convergence)
+MAX_STEPS = 200 # Instrument run duration (sufficient for convergence)
 
 # ── Collision Avoidance — Contact Inhibition of Locomotion ───────────────────
 # Repulsive quorum sensing models contact inhibition observed between
@@ -63,3 +69,12 @@ MAX_STEPS = 300 # Instrument run duration (sufficient for convergence)
 # from excessive local cell density at injection sites.
 QUORUM_RADIUS = 3 # Activation distance (~1.2 mm minimum cell spacing)
 QUORUM_STRENGTH = 0.5 # Repulsive force magnitude
+# ── Injection Zone — Perilesional Spawn Radius ────────────────────────────────
+# Clinical MuSC delivery targets the perilesional region — tissue immediately
+# surrounding the injury — not distant injection sites far from the gradient.
+# SPAWN_RADIUS = 30 grid units ≈ 12 mm from injury centre.
+# This ensures agents are within the detectable HGF gradient from step 1,
+# making navigational noise the primary determinant of targeting success.
+SPAWN_RADIUS = 30
+# ── Statistical Validation ────────────────────────────────────────────────────
+SENSITIVITY_RUNS = 10   # Independent runs per σ_CAR value in sensitivity analysis

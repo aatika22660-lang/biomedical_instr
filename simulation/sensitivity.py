@@ -30,15 +30,15 @@ import matplotlib.pyplot as plt
 import os
 
 from simulation.config import (
-    SIGMA_NOISE, MAX_STEPS, NUM_AGENTS, ENGRAFT_SUCCESS_RATE
+    SIGMA_NOISE, MAX_STEPS, NUM_AGENTS, ENGRAFT_SUCCESS_RATE, SENSITIVITY_RUNS
 )
-from simulation.simulation import Simulation
 
+from simulation.simulation import Simulation
 
 def sensitivity_analysis(
     sigma_car_values = (0.15, 0.20, 0.25, 0.30),
     sigma_unmod      = SIGMA_NOISE,
-    n_runs           = 5,
+    n_runs           = SENSITIVITY_RUNS,
     n_steps          = MAX_STEPS,
     n_agents         = NUM_AGENTS,
     base_seed        = 42,

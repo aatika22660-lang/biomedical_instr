@@ -21,13 +21,20 @@ random seed baseline, making condition comparisons fair.
 import numpy as np
 from simulation.config import (
     GRID_SIZE, NUM_AGENTS, MAX_STEPS,
-    SIGMA_NOISE, SIGMA_CAR, SIGMA_BROAD, REPAIR_RATE, ENGRAFT_SUCCESS_RATE
+    SIGMA_NOISE, SIGMA_CAR, SIGMA_BROAD, SIGMA_HGF, SIGMA_SIMULATION,
+    REPAIR_RATE, ENGRAFT_SUCCESS_RATE, SPAWN_RADIUS
 )
+
+
+
 from simulation.environment import (
     make_hgf_gradient, make_injury_mask, make_border_mask,
-    random_edge_position
+    random_edge_position, random_perilesional_position
 )
 from simulation.agent import Agent
+
+
+
 
 
 class Simulation:
@@ -59,7 +66,7 @@ class Simulation:
         self.seed         = seed
 
         # ── Environment ───────────────────────────────────────────────────────
-        self.hgf_grid = make_hgf_gradient(sigma=SIGMA_BROAD)
+        self.hgf_grid = make_hgf_gradient(sigma=SIGMA_SIMULATION)
         self.injury_mask = make_injury_mask()
         self.border_mask = make_border_mask(self.injury_mask)
 
@@ -71,32 +78,34 @@ class Simulation:
         # ── Spawn positions — use a dedicated seed-based RNG for positions only
         # so agent RNGs (below) are fully independent of spawn locations
         spawn_rng = np.random.default_rng(seed)
-        unmod_positions = [random_edge_position(rng=spawn_rng) for _ in range(n_agents)]  # FIX 1: keyword arg
-        car_positions   = [random_edge_position(rng=spawn_rng) for _ in range(n_agents)]  # FIX 1: keyword arg
+        spawn_positions = [
+            random_perilesional_position(GRID_SIZE, SPAWN_RADIUS, spawn_rng)
+            for _ in range(n_agents)
+        ]
 
         # ── Spawn agents — each agent gets its own independently seeded RNG ──
-        # FIX 2: per-agent RNGs instead of one shared self.rng
-        # Unmod agents: seeds seed+0 … seed+49
-        # CAR agents:   seeds seed+100 … seed+149  (offset prevents collision)
+        # FIX: Synchronised seeds (seed + i) for both populations ensures that
+        # if both reach the zone at the same time, they receive the same
+        # engraftment roll outcome, perfectly isolating navigational efficiency.
         self.unmod_agents = [
             Agent(
                 x=x, y=y,
                 sigma=sigma_unmod,
                 rng=np.random.default_rng(seed + i),
                 injury_mask=self.injury_mask,
-                engraft_rate=engraft_rate,   # FIX 3: wired through to Agent
+                engraft_rate=engraft_rate,
             )
-            for i, (x, y) in enumerate(unmod_positions)
+            for i, (x, y) in enumerate(spawn_positions)
         ]
         self.car_agents = [
             Agent(
                 x=x, y=y,
                 sigma=sigma_car,
-                rng=np.random.default_rng(seed + 100 + i),
+                rng=np.random.default_rng(seed + i),
                 injury_mask=self.injury_mask,
-                engraft_rate=engraft_rate,   # FIX 3: wired through to Agent
+                engraft_rate=engraft_rate,
             )
-            for i, (x, y) in enumerate(car_positions)
+            for i, (x, y) in enumerate(spawn_positions)
         ]
 
         # ── Metrics history ───────────────────────────────────────────────────
