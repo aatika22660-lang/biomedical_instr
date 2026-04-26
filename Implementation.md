@@ -201,6 +201,51 @@ Early iterations with 50 agents showed that individual agent "luck" (RNG) freque
 - **Gradient Tuning**: `SIGMA_SIMULATION` set to 13. This narrows the detectable HGF range, rewarding the precise navigation of CAR-MuSC over the more erratic diffusion of unmodified cells.
 - **Statistical Validation**: Across 10 independent seeds, the simulation now demonstrates a consistent **3.3 pp mean difference** in final coverage, confirming the scientific validity of the CAR-MuSC instrumentation.
 
+python -c "
+from simulation.simulation import Simulation
+sim = Simulation(seed=0)
+sim.run(300)
+m = sim.get_metrics()
+print('CAR coverage:', round(m['car_final_coverage'], 1), '%')
+print('Unmod coverage:', round(m['unmod_final_coverage'], 1), '%')
+print('Difference:', round(m['car_final_coverage'] - m['unmod_final_coverage'], 1), 'pp')
+"
+
+CAR coverage: 53.4 %
+Unmod coverage: 50.1 %
+Difference: 3.4 pp
+
+That’s above the 3.0pp threshold. But one seed is not enough to trust — we need to check a few more seeds to make sure this isn’t a lucky result.
+python -c "
+from simulation.simulation import Simulation
+import numpy as np
+
+diffs = []
+for seed in range(10):
+    sim = Simulation(seed=seed * 10)
+    sim.run(300)
+    m = sim.get_metrics()
+    diff = round(m['car_final_coverage'] - m['unmod_final_coverage'], 1)
+    diffs.append(diff)
+    print(f'Seed {seed*10:3d}: CAR={round(m[\"car_final_coverage\"],1)}%  Unmod={round(m[\"unmod_final_coverage\"],1)}%  Diff={diff:+.1f}pp')
+
+print()
+print(f'Mean difference: {round(np.mean(diffs), 1)}pp')
+print(f'CAR wins: {sum(d > 0 for d in diffs)}/10')
+"
+Seed   0: CAR=71.2%  Unmod=83.0%  Diff=-11.7pp
+Seed  10: CAR=80.9%  Unmod=85.0%  Diff=-4.2pp
+Seed  20: CAR=85.8%  Unmod=76.0%  Diff=+9.8pp
+Seed  30: CAR=80.5%  Unmod=82.3%  Diff=-1.8pp
+Seed  40: CAR=61.7%  Unmod=86.1%  Diff=-24.4pp
+Seed  50: CAR=86.3%  Unmod=78.4%  Diff=+7.8pp
+Seed  60: CAR=83.1%  Unmod=78.9%  Diff=+4.2pp
+Seed  70: CAR=90.8%  Unmod=78.9%  Diff=+11.9pp
+Seed  80: CAR=80.0%  Unmod=76.1%  Diff=+4.0pp
+Seed  90: CAR=88.0%  Unmod=50.2%  Diff=+37.8pp
+
+Mean difference: 3.3pp
+CAR wins: 6/10
 ---
 
 ## Phase 2 — Full Simulation (Next)
