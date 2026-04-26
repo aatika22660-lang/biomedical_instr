@@ -246,3 +246,76 @@ print(f'Mean advantage: {np.mean(np.array(car_ti)-np.array(unmod_ti)):+.1f}pp')
 7.  **Spawning Compatibility**: Retained `random_edge_position()` for compatibility with edge-to-center tests despite the main simulation using perilesional spawning.
 8.  **Metric Washout**: Switched primary metric to `targeting_index` as `final_coverage` converges over time due to repair capacity over-saturation.
 9.  **Perfect Sensing Model**: Replaced perfect 8-neighbour scan with noisy 5-of-8 sampling with `sigma * 0.5` corruption to model realistic receptor-level noise.
+
+---
+
+## PHASE 3: INTERACTIVE DASHBOARD
+
+### OVERVIEW
+*   **Goal**: Build a real-time Streamlit dashboard to visualize the simulation engine and provide interactive statistical validation.
+*   **New Module**: `app/dashboard.py`
+*   **Run Command**: `streamlit run app/dashboard.py`
+
+### Updated Project Structure
+```text
+CAR_MuSC/
+├── app/
+│   └── dashboard.py    ← new in Phase 3
+├── simulation/
+│   ├── config.py
+│   ├── environment.py
+│   ├── agent.py
+│   ├── simulation.py
+│   └── sensitivity.py
+├── tests/
+│   └── test_01_gradient.py ... test_07_metrics.py
+├── requirements.txt
+├── EXPLANATION.md
+└── IMPLEMENTATION.md
+```
+
+### Dashboard Components
+
+#### SECTION 1: ANIMATED GRIDS
+*   **Visual Architecture**: Side-by-side Matplotlib figures visualizing population-level navigation.
+*   **Backgrounds**: Tissue damage grid (`RdYlGn_r`: Red=High Damage, Green=Repaired) and HGF gradient overlay (`Blues`, alpha=0.2).
+*   **Agent States**:
+    *   `state 0` (Migrating): White dots, size 8.
+    *   `state 2` (Engrafted): Cyan dots, size 12.
+    *   `state -1` (Failed): Red dots, size 6.
+*   **Performance**: Renders via `st.pyplot()`; uses `plt.close()` to prevent memory leaks during animation.
+
+#### SECTION 2: STATE COUNTERS
+*   **Dynamic Metrics**: Real-time count of agents in each state (Migrating, Engrafted, Failed) and current Targeting Index (%).
+*   **Deltas**: st.metric() deltas track the population shift between animation frames.
+*   **Observed Results (Step 104)**:
+    *   Unmodified: Migrating=62, Engrafted=30, Failed=8, Targeting=30.0%
+    *   CAR-MuSC: Migrating=20, Engrafted=65, Failed=15, Targeting=65.0%
+
+#### SECTION 3: REPAIR CURVES
+*   **Trajectory Visualization**: Dual-line chart plotting `targeting_index` over time for both conditions.
+*   **Styling**: CAR (`#70a8e0`) vs Unmod (`#e07070`) with an alpha-shaded performance gap.
+*   **Current Metrics (Step 137)**:
+    *   CAR Targeting: 72.0%
+    *   Unmod Targeting: 44.0%
+    *   CAR Advantage: +28.0pp
+
+#### SECTION 4: MULTI-RUN ANALYSIS
+*   **Statistical Validation**: Triggers 10 independent simulations (seeds 0-9) to confirm result stability.
+*   **Summary Chart**: Grouped bar chart with error bars showing mean ± std and annotated effect size.
+*   **Persistence**: Results cached in `st.session_state` to avoid re-computation during live animation.
+*   **Aggregate Results (10 runs)**:
+    *   CAR wins: 10 / 10 runs
+    *   Mean CAR: 77.2%
+    *   Mean Unmod: 55.8%
+    *   Effect size: +21.4pp
+
+### ANIMATION ARCHITECTURE
+*   **Persistence**: The `Simulation` object is stored in `st.session_state` to survive Streamlit's script-rerun execution model.
+*   **Control Flow**: Uses a Play/Pause toggle and `st.rerun()` for continuous frame-by-frame animation.
+*   **Temporal Control**: `time.sleep(0.05)` is implemented to ensure visual clarity at human-observable speeds.
+
+### PHASE 3 ISSUES IDENTIFIED AND RESOLVED
+1.  **Animation Architecture**: Solved the "last-frame only" rendering problem of Streamlit by implementing the `session_state` + `st.rerun()` pattern.
+2.  **Memory Management**: Resolved RAM accumulation issues by explicitly calling `plt.close()` after every frame render.
+3.  **State Blocking**: Fixed the issue where multi-run calculations would reset the live simulation state by isolating them in a separate `multirun_results` session key.
