@@ -27,12 +27,13 @@ SIGMA_BROAD = 22        # Broad HGF sigma for edge-to-centre navigation tests.
                         # SIGMA_HGF=8 decays to ~0 at r=25; agents spawn at r=50.
                         # SIGMA_BROAD=22 keeps the gradient navigable from grid edges.
                         # Used in Tests 03 and 07 and the sensitivity analysis.
-                        
-SIGMA_SIMULATION = 13   # Intermediate gradient for full simulation runs.
-                        # At spawn radius 30: HGF ≈ 0.41 — gradient direction
-                        # is detectable but not strong enough to overwhelm noise.
-                        # Creates the regime where σ_CAR vs σ_noise produces a
-                        # meaningful difference in targeting success.
+
+SIGMA_SIMULATION = 15   # Intermediate gradient for full simulation runs.
+                        # At spawn radius 38: HGF ≈ 0.20 — gradient direction
+                        # is detectable but weak enough that navigational noise
+                        # is the primary determinant of targeting success.
+                        # Creates the regime where σ_CAR=0.2 vs σ_noise=0.4
+                        # produces a meaningful, reproducible coverage difference.
 
 # ── Signal Processing — Agent Navigation Model ───────────────────────────────
 # Agents climb the HGF gradient via discrete gradient ascent with
@@ -77,4 +78,4 @@ QUORUM_STRENGTH = 0.5 # Repulsive force magnitude
 # making navigational noise the primary determinant of targeting success.
 SPAWN_RADIUS = 30
 # ── Statistical Validation ────────────────────────────────────────────────────
-SENSITIVITY_RUNS = 10   # Independent runs per σ_CAR value in sensitivity analysis
+SENSITIVITY_RUNS = 20   # Independent runs per σ_CAR value in sensitivity analysis

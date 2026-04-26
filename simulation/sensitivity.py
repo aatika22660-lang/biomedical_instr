@@ -2,8 +2,8 @@
 sensitivity.py
 CAR-MuSC Simulation — Sensitivity Analysis
 
-Sweeps σ_CAR across [0.15, 0.20, 0.25, 0.30] and reports mean final
-coverage for both CAR-MuSC and unmodified MuSC at each value.
+Sweeps σ_CAR across [0.15, 0.20, 0.25, 0.30] and reports mean
+targeting index for both CAR-MuSC and unmodified MuSC at each value.
 
 Purpose (from roadmap):
     Prove that the CAR advantage holds across a range of plausible σ_CAR
@@ -67,20 +67,20 @@ def sensitivity_analysis(
     results : list of dict, one entry per σ_CAR value, each containing:
         {
             'sigma_car'          : float — the σ_CAR value tested
-            'car_coverage_mean'  : float — mean CAR final coverage (%)
-            'car_coverage_std'   : float — std CAR final coverage (%)
-            'unmod_coverage_mean': float — mean unmod final coverage (%)
-            'unmod_coverage_std' : float — std unmod final coverage (%)
+            'car_targeting_mean' : float — mean CAR targeting index (%)
+            'car_targeting_std'  : float — std CAR targeting index (%)
+            'unmod_targeting_mean': float — mean unmod targeting index (%)
+            'unmod_targeting_std' : float — std unmod targeting index (%)
             'car_wins'           : int   — number of runs where CAR > unmod
-            'car_advantage_mean' : float — mean (CAR coverage − unmod coverage)
+            'car_advantage_mean' : float — mean (CAR targeting − unmod targeting)
         }
     """
     results = []
 
     for sigma_car in sigma_car_values:
         print(f"  Testing σ_CAR = {sigma_car:.2f}…", end=" ", flush=True)
-        car_coverages   = []
-        unmod_coverages = []
+        car_targetings   = []
+        unmod_targetings = []
 
         for run in range(n_runs):
             seed = base_seed + run
@@ -93,24 +93,24 @@ def sensitivity_analysis(
             )
             sim.run(n_steps)
             metrics = sim.get_metrics()
-            car_coverages.append(metrics['car_final_coverage'])
-            unmod_coverages.append(metrics['unmod_final_coverage'])
+            car_targetings.append(metrics['car_targeting_index'])
+            unmod_targetings.append(metrics['unmod_targeting_index'])
 
-        car_arr   = np.array(car_coverages)
-        unmod_arr = np.array(unmod_coverages)
+        car_arr   = np.array(car_targetings)
+        unmod_arr = np.array(unmod_targetings)
 
         entry = {
             'sigma_car'          : sigma_car,
-            'car_coverage_mean'  : float(car_arr.mean()),
-            'car_coverage_std'   : float(car_arr.std()),
-            'unmod_coverage_mean': float(unmod_arr.mean()),
-            'unmod_coverage_std' : float(unmod_arr.std()),
+            'car_targeting_mean' : float(car_arr.mean()),
+            'car_targeting_std'  : float(car_arr.std()),
+            'unmod_targeting_mean': float(unmod_arr.mean()),
+            'unmod_targeting_std' : float(unmod_arr.std()),
             'car_wins'           : int(np.sum(car_arr > unmod_arr)),
             'car_advantage_mean' : float((car_arr - unmod_arr).mean()),
         }
         results.append(entry)
-        print(f"CAR {entry['car_coverage_mean']:.1f}% vs Unmod "
-              f"{entry['unmod_coverage_mean']:.1f}%  "
+        print(f"CAR {entry['car_targeting_mean']:.1f}% vs Unmod "
+              f"{entry['unmod_targeting_mean']:.1f}%  "
               f"(CAR wins {entry['car_wins']}/{n_runs})")
 
     return results
@@ -131,11 +131,11 @@ def plot_sensitivity(results, out_path=None):
                               simulation/sensitivity_output.png
     """
     sigma_labels  = [f"σ_CAR={r['sigma_car']:.2f}" for r in results]
-    car_means     = [r['car_coverage_mean']   for r in results]
-    car_stds      = [r['car_coverage_std']    for r in results]
-    unmod_means   = [r['unmod_coverage_mean'] for r in results]
-    unmod_stds    = [r['unmod_coverage_std']  for r in results]
-    advantages    = [r['car_advantage_mean']  for r in results]
+    car_means     = [r['car_targeting_mean']   for r in results]
+    car_stds      = [r['car_targeting_std']    for r in results]
+    unmod_means   = [r['unmod_targeting_mean'] for r in results]
+    unmod_stds    = [r['unmod_targeting_std']  for r in results]
+    advantages    = [r['car_advantage_mean']   for r in results]
 
     x      = np.arange(len(sigma_labels))
     width  = 0.35
@@ -156,8 +156,8 @@ def plot_sensitivity(results, out_path=None):
 
     ax.set_xticks(x)
     ax.set_xticklabels(sigma_labels, fontsize=10)
-    ax.set_ylabel('Mean final coverage (%)', fontsize=11)
-    ax.set_title('Coverage by σ_CAR value\n(mean ± std, 5 runs each)', fontsize=11)
+    ax.set_ylabel('Mean targeting index (%)', fontsize=11)
+    ax.set_title('Targeting by σ_CAR value\n(mean ± std, 20 runs each)', fontsize=11)
     ax.set_ylim(0, 100)
     ax.axhline(40, color='grey', linestyle='--', linewidth=0.8, alpha=0.6)
     ax.axhline(80, color='grey', linestyle='--', linewidth=0.8, alpha=0.6)
@@ -172,7 +172,7 @@ def plot_sensitivity(results, out_path=None):
                      where=[a > 0 for a in advantages],
                      alpha=0.15, color='#70a8e0', label='CAR advantage')
     ax2.set_xlabel('σ_CAR value', fontsize=11)
-    ax2.set_ylabel('CAR coverage advantage (pp)', fontsize=11)
+    ax2.set_ylabel('CAR targeting advantage (pp)', fontsize=11)
     ax2.set_title('CAR advantage vs σ_CAR\n(positive = CAR outperforms)', fontsize=11)
     ax2.legend(fontsize=9)
 
@@ -191,19 +191,19 @@ def plot_sensitivity(results, out_path=None):
 
 def print_summary(results):
     """Print a formatted summary table of sensitivity analysis results."""
-    n_runs = results[0]['car_wins'] if results else 5   # approximate
+    n_runs = SENSITIVITY_RUNS
     print("=" * 65)
     print("SENSITIVITY ANALYSIS — σ_CAR sweep")
     print("=" * 65)
-    print(f"{'σ_CAR':<8} {'CAR coverage':>14} {'Unmod coverage':>16} "
+    print(f"{'σ_CAR':<8} {'CAR targeting':>14} {'Unmod targeting':>16} "
           f"{'Advantage':>11} {'CAR wins':>10}")
     print("-" * 65)
     for r in results:
         print(f"{r['sigma_car']:<8.2f} "
-              f"{r['car_coverage_mean']:>6.1f} ± {r['car_coverage_std']:<5.1f}  "
-              f"{r['unmod_coverage_mean']:>7.1f} ± {r['unmod_coverage_std']:<5.1f}  "
+              f"{r['car_targeting_mean']:>6.1f} ± {r['car_targeting_std']:<5.1f}  "
+              f"{r['unmod_targeting_mean']:>7.1f} ± {r['unmod_targeting_std']:<5.1f}  "
               f"{r['car_advantage_mean']:>+8.1f}pp  "
-              f"{r['car_wins']:>5}/{5}")
+              f"{r['car_wins']:>5}/{n_runs}")
     print("=" * 65)
 
     car_wins_all = all(r['car_advantage_mean'] > 0 for r in results)
@@ -213,6 +213,7 @@ def print_summary(results):
               " across full parameter range.")
     else:
         print("✗ CAR advantage breaks down at some σ values — review assumptions.")
+
 
 
 # ── Run directly ──────────────────────────────────────────────────────────────

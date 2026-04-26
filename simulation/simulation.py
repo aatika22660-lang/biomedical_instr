@@ -33,10 +33,6 @@ from simulation.environment import (
 )
 from simulation.agent import Agent
 
-
-
-
-
 class Simulation:
     """
     Full CAR-MuSC vs Unmodified MuSC comparison simulation.
@@ -83,10 +79,23 @@ class Simulation:
             for _ in range(n_agents)
         ]
 
-        # ── Spawn agents — each agent gets its own independently seeded RNG ──
-        # FIX: Synchronised seeds (seed + i) for both populations ensures that
-        # if both reach the zone at the same time, they receive the same
-        # engraftment roll outcome, perfectly isolating navigational efficiency.
+                # ── Spawn agents — paired experimental design ─────────────────────────
+        # Both populations use seed + i for agent i. This is a deliberate
+        # paired design analogous to a matched-pairs t-test:
+        #
+        #   - Agent i (unmod) and agent i (CAR) start at the same position
+        #     and share the same engraftment RNG seed.
+        #   - This means any difference in engraftment outcome is driven
+        #     purely by navigational efficiency (sigma), not by luck in the
+        #     engraftment roll.
+        #   - This REDUCES noise in the CAR vs unmod comparison, making the
+        #     navigational signal easier to detect across runs.
+        #
+        # Trade-off: per-agent engraftment outcomes are correlated between
+        # conditions (agent 0 unmod and agent 0 CAR get the same roll if they
+        # both reach the zone). This is intentional — it isolates the
+        # independent variable (sigma) from the engraftment stochasticity.
+        # For fully independent populations, use seed + n_agents + i for CAR.
         self.unmod_agents = [
             Agent(
                 x=x, y=y,
@@ -97,6 +106,17 @@ class Simulation:
             )
             for i, (x, y) in enumerate(spawn_positions)
         ]
+        self.car_agents = [
+            Agent(
+                x=x, y=y,
+                sigma=sigma_car,
+                rng=np.random.default_rng(seed + i),  # matched pair with unmod agent i
+                injury_mask=self.injury_mask,
+                engraft_rate=engraft_rate,
+            )
+            for i, (x, y) in enumerate(spawn_positions)
+        ]
+
         self.car_agents = [
             Agent(
                 x=x, y=y,

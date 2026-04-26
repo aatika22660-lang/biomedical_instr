@@ -10,52 +10,34 @@ import matplotlib.pyplot as plt
 from simulation.environment import (
     make_hgf_gradient, make_injury_mask, make_border_mask, random_edge_position
 )
-from simulation.config import GRID_SIZE, HGF_THRESHOLD, MAX_STEPS, SIGMA_CAR
+from simulation.config import GRID_SIZE, HGF_THRESHOLD, MAX_STEPS, SIGMA_CAR, SIGMA_BROAD
+from simulation.agent import Agent
 
 # ── Setup ──────────────────────────────────────────────────────────────────────
 rng         = np.random.default_rng(42)
-hgf         = make_hgf_gradient()
+hgf         = make_hgf_gradient(sigma=SIGMA_BROAD)
 injury_mask = make_injury_mask()
 border_mask = make_border_mask(injury_mask)
 
-# 8-connected neighbour offsets
-NEIGHBOURS = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
-
-def clamp(v, lo=1, hi=GRID_SIZE - 2):
-    return max(lo, min(hi, v))
-
 # ── Spawn agent on a random edge ───────────────────────────────────────────────
 x, y = random_edge_position(rng=rng)
-trajectory = [(x, y)]
 
-steps      = 0
-in_bounds  = True
-final_hgf  = hgf[x, y]
+agent = Agent(x=x, y=y, sigma=SIGMA_CAR, rng=rng, injury_mask=injury_mask)
+trajectory = [(agent.x, agent.y)]
+
+steps     = 0
+in_bounds = True
+final_hgf = hgf[agent.x, agent.y]
 
 for step in range(MAX_STEPS):
-    # Gradient ascent: score each neighbour
-    best_val = -np.inf
-    best_dx, best_dy = 0, 0
-    for dx, dy in NEIGHBOURS:
-        nx, ny = x + dx, y + dy
-        if 0 <= nx < GRID_SIZE and 0 <= ny < GRID_SIZE:
-            if hgf[nx, ny] > best_val:
-                best_val = hgf[nx, ny]
-                best_dx, best_dy = dx, dy
+    agent.step(hgf, [agent], step)
 
-    # Add Gaussian noise
-    noise_x = rng.normal(0, SIGMA_CAR)
-    noise_y = rng.normal(0, SIGMA_CAR)
-
-    x = clamp(int(round(x + best_dx + noise_x)))
-    y = clamp(int(round(y + best_dy + noise_y)))
-
-    if not (0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE):
+    if not (0 <= agent.x < GRID_SIZE and 0 <= agent.y < GRID_SIZE):
         in_bounds = False
 
-    trajectory.append((x, y))
+    trajectory.append((agent.x, agent.y))
     steps += 1
-    final_hgf = hgf[x, y]
+    final_hgf = hgf[agent.x, agent.y]
 
     if final_hgf > HGF_THRESHOLD:
         break

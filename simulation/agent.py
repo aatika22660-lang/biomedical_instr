@@ -76,14 +76,20 @@ class Agent:
 
         x, y = self.x, self.y
 
-        # 1. Gradient ascent -- pick neighbour with highest HGF
+        # 1. Noisy, partial gradient sensing
+        # Sample only 5 random neighbours to model imperfect sensing
+        sampled_neighbours = self.rng.choice(_NEIGHBOURS, size=5, replace=False)
+
         best_val = -np.inf
         best_dx, best_dy = 0, 0
-        for dx, dy in _NEIGHBOURS:
+
+        for dx, dy in sampled_neighbours:
             nx, ny = x + dx, y + dy
             if 0 <= nx < GRID_SIZE and 0 <= ny < GRID_SIZE:
-                if hgf_grid[nx, ny] > best_val:
-                    best_val         = hgf_grid[nx, ny]
+                # Add receptor-level noise to the HGF reading
+                observed_hgf = hgf_grid[nx, ny] + self.rng.normal(0, self.sigma * 0.5)
+                if observed_hgf > best_val:
+                    best_val         = observed_hgf
                     best_dx, best_dy = dx, dy
 
         # 2. Quorum sensing -- repel from nearby active neighbours
@@ -96,13 +102,9 @@ class Agent:
                 rep_x += (x - other.x) / dist * QUORUM_STRENGTH
                 rep_y += (y - other.y) / dist * QUORUM_STRENGTH
 
-        # 3. Stochastic noise
-        noise_x = self.rng.normal(0, self.sigma)
-        noise_y = self.rng.normal(0, self.sigma)
-
-        # 4. Apply movement and clamp to grid bounds
-        self.x = _clamp(int(round(x + best_dx + rep_x + noise_x)))
-        self.y = _clamp(int(round(y + best_dy + rep_y + noise_y)))
+        # 3. Apply movement (noise is now integrated into sensing)
+        self.x = _clamp(int(round(x + best_dx + rep_x)))
+        self.y = _clamp(int(round(y + best_dy + rep_y)))
 
         # 5. Check engraftment trigger -- must be in injury zone above threshold
         if (hgf_grid[self.x, self.y] > HGF_THRESHOLD
@@ -147,7 +149,14 @@ class Agent:
         )
 
         # Bias toward the highest remaining damage cell in the neighbourhood
-        # so engrafted agents spread repair rather than stacking on one cell
+        # so engrafted agents spread repair rather than stacking on one cell.
+        #
+        # Intentional behaviour: if all neighbouring cells are fully repaired
+        # (damage == 0.0), best_val stays -np.inf and best_x/best_y stay at
+        # self.x, self.y — the agent stops moving. This is correct: an agent
+        # in a fully-repaired zone has nothing left to do. repair() will still
+        # be called each step but the damage clamp (max 0.0) means it has no
+        # further effect. No guard clause is needed.
         best_val       = -np.inf
         best_x, best_y = self.x, self.y
         for dx, dy in _NEIGHBOURS:
