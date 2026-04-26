@@ -1,0 +1,143 @@
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_gradient.py
+=============================================
+TEST 01 — Grid and Gradient
+=============================================
+Max HGF:           1.0000  (expect 1.0)
+Min HGF:           0.000000  (expect < 0.05)
+Border zone cells: 408      (expect > 0)
+Injury zone cells: 331      (expect > 0)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_output2.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_gradient.py
+=============================================
+TEST 01 — Grid and Gradient
+=============================================
+Max HGF:           1.0000  (expect 1.0)
+Min HGF:           0.000000  (expect < 0.05)
+Border zone cells: 408      (expect > 0)
+Injury zone cells: 331      (expect > 0)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_output2.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_gradient.py
+=============================================
+TEST 01 — Grid and Gradient
+=============================================
+Max HGF:           1.0000  (expect 1.0)
+Min HGF:           0.000000  (expect < 0.05)
+Border zone cells: 408      (expect > 0)
+Injury zone cells: 331      (expect > 0)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_output2.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_gradient.py
+=============================================
+TEST 01 — Grid and Gradient
+=============================================
+Max HGF:           1.0000  (expect 1.0)
+Min HGF:           0.000000  (expect < 0.05)
+Border zone cells: 408      (expect > 0)
+Injury zone cells: 331      (expect > 0)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_02_single_agent.py
+=============================================
+TEST 02 — Single Agent Navigation
+=============================================
+Final HGF value:  0.5311  (expect > 0.5)
+Steps taken:      41       (expect < 200)
+Stayed in bounds: True   (expect True)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_02_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_03_car_boost.py
+Running unmodified MuSC (σ=0.4)…
+Running CAR-MuSC       (σ=0.2)…
+==================================================
+TEST 03 — A Priori Hypothesis: CAR Navigation Advantage
+==================================================
+Hypothesis: CAR-MuSC arrives faster with lower variance than unmodified
+--------------------------------------------------
+Mean steps unmodified: 26.1 ± 3.3
+Mean steps CAR:        25.9 ± 2.2
+H1 — CAR variance reduced:     2.2 vs 3.3  (expect CAR std < unmod std)
+Note: mean arrival difference 0.2 steps — not claimed as significant
+H2 — CAR less variable:        True   (expect True)
+Targeting index unmod:         100.0%
+Targeting index CAR:           100.0%
+H3 — CAR better targeting:     True   (expect True)
+
+Variance hypothesis SUPPORTED ✓ — CAR-MuSC demonstrates reduced navigational variance consistent with improved directional persistence
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_03_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_04_engraftment.py
+==================================================
+TEST 04 — Engraftment Logic
+==================================================
+Trials:           1000
+Successes:        803   (80.3%)
+Failures:         197    (19.7%)
+Success rate:     0.8030  (expect 0.8 ± 0.05)
+Within tolerance: True  (expect True)
+HGF at mock pos:  0.000000  (expect < 0.5)
+Healthy engraft:  0  (expect 0)
+
+All checks PASSED ✓
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_05_repair.py
+==================================================
+TEST 05 — Repair Feedback
+==================================================
+Initial damage at agent: 1.0000
+Final damage at agent:   0.2500
+Damage decreases:        True   (expect True)
+No negative damage:      True   (expect True)
+Total zone reduced:      True   (expect True)
+Zone damage: 331.00 → 330.25
+
+All checks PASSED ✓
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_06_swarm.py
+==================================================
+TEST 06 — Swarm Behaviour
+==================================================
+All in bounds always:        True   (expect True)
+State counts sum to 50:      True   (expect True)
+Quorum repulsion triggered:  True   (expect True)
+
+All checks PASSED ✓
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_07_metrics.py
+Running 10 simulations per condition...
+  Run 1/10... CAR cov=57.7%  Unmod cov=61.9%
+  Run 2/10... CAR cov=55.8%  Unmod cov=61.4%
+  Run 3/10... CAR cov=66.1%  Unmod cov=53.2%
+  Run 4/10... CAR cov=62.2%  Unmod cov=56.0%
+  Run 5/10... CAR cov=55.8%  Unmod cov=60.5%
+  Run 6/10... CAR cov=66.0%  Unmod cov=60.4%
+  Run 7/10... CAR cov=64.6%  Unmod cov=56.1%
+  Run 8/10... CAR cov=67.2%  Unmod cov=56.5%
+  Run 9/10... CAR cov=62.4%  Unmod cov=61.6%
+  Run 10/10... CAR cov=66.2%  Unmod cov=42.0%
+============================================================
+TEST 07 — Metrics Validation (10 Runs)
+============================================================
+CAR coverage mean ± std:   62.4 ± 4.2%
+Unmod coverage mean ± std: 57.0 ± 5.7%
+Effect size (CAR - Unmod): +5.4 pp  (expect > 3.0)
+CAR wins (7/10 runs):      True  (expect >= 7/10)
+CAR mean arrival step:     15.1  vs unmod 15.3
+CAR arrives faster/equal:  True  (expect True)
+Coverage in range [40,80]: True  (expect True)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_07_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % 
