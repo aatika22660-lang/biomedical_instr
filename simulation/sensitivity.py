@@ -185,7 +185,7 @@ def plot_sensitivity(results, out_path=None):
     plt.tight_layout()
 
     if out_path is None:
-        out_path = os.path.join(os.path.dirname(__file__), 'sensitivity_output.png')
+        out_path = os.path.join(os.path.dirname(__file__), '..', 'report', 'figures', 'sensitivity_output.png')
     plt.savefig(out_path, dpi=120)
     plt.close()
     print(f"Sensitivity plot saved → {out_path}")

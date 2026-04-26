@@ -157,7 +157,7 @@ plt.suptitle(
 )
 plt.tight_layout()
 
-out = os.path.join(os.path.dirname(__file__), 'test_07_output.png')
+out = os.path.join(os.path.dirname(__file__), '..', 'report', 'figures', 'test_07_output.png')
 plt.savefig(out, dpi=120)
 plt.close()
 print(f"Plot saved → {out}")

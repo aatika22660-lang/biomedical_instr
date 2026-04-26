@@ -139,7 +139,7 @@ axes[1].set_ylim(0, 110)
 plt.suptitle('Test 03 — A Priori Hypothesis: CAR Navigation Advantage\n(σ_CAR=0.2 vs σ_unmod=0.4, N=100 agents)', fontsize=12, fontweight='bold')
 plt.tight_layout()
 
-out = os.path.join(os.path.dirname(__file__), 'test_03_output.png')
+out = os.path.join(os.path.dirname(__file__), '..', 'report', 'figures', 'test_03_output.png')
 plt.savefig(out, dpi=120)
 plt.close()
 print(f"Plot saved → {out}")

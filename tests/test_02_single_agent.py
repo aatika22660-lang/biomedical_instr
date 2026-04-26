@@ -68,7 +68,7 @@ ax.legend(loc='upper right', fontsize=8)
 ax.set_title(f'Test 02 — Single Agent Navigation\nSteps: {steps}  |  Final HGF: {final_hgf:.3f}')
 ax.set_xlabel('X'); ax.set_ylabel('Y')
 
-out = os.path.join(os.path.dirname(__file__), 'test_02_output.png')
+out = os.path.join(os.path.dirname(__file__), '..', 'report', 'figures', 'test_02_output.png')
 plt.tight_layout()
 plt.savefig(out, dpi=120)
 plt.close()

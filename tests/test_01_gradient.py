@@ -42,7 +42,7 @@ ax.contour(border_mask.T.astype(float), levels=[0.5], colors='lime',  linewidths
 ax.set_title('Test 01 — HGF Gradient\nCyan = injury ellipse | Green = border zone')
 ax.set_xlabel('X'); ax.set_ylabel('Y')
 
-out = os.path.join(os.path.dirname(__file__), 'test_01_output.png')
+out = os.path.join(os.path.dirname(__file__), '..', 'report', 'figures', 'test_01_output.png')
 plt.tight_layout()
 plt.savefig(out, dpi=120)
 plt.close()
