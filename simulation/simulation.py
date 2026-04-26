@@ -18,6 +18,11 @@ Two parallel populations are always run together so they share the same
 random seed baseline, making condition comparisons fair.
 """
 
+import os
+import sys
+# Add project root to sys.path to allow absolute imports from 'simulation' package
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
 from simulation.config import (
     GRID_SIZE, NUM_AGENTS, MAX_STEPS,

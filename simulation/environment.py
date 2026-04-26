@@ -58,6 +58,11 @@ def random_edge_position(grid_size=GRID_SIZE, rng=None):
     """
     Return a random (x, y) position on the grid border.
 
+    Note: not used by the main Simulation class, which uses
+    random_perilesional_position() for biologically realistic spawning.
+    Retained here for Tests 02, 03, and 06 which test edge-to-centre
+    navigation as an isolated navigational benchmark.
+
     Parameters
     ----------
     grid_size : int                  — side length of the square grid

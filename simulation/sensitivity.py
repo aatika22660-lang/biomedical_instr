@@ -28,6 +28,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
+import sys
+# Add project root to sys.path to allow absolute imports from 'simulation' package
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from simulation.config import (
     SIGMA_NOISE, MAX_STEPS, NUM_AGENTS, ENGRAFT_SUCCESS_RATE, SENSITIVITY_RUNS

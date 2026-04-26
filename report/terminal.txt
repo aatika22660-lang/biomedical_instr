@@ -1,0 +1,109 @@
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatika
+shaikh/.pyenv/versions/3.12.0/bin/python /Users/aatikasha
+ikh/Desktop/CAR_MuSC/tests/test_01_gradient.py
+=============================================
+TEST 01 — Grid and Gradient
+=============================================
+Max HGF:           1.0000  (expect 1.0)
+Min HGF:           0.000000  (expect < 0.05)
+Border zone cells: 408      (expect > 0)
+Injury zone cells: 331      (expect > 0)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_01_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatika
+shaikh/.pyenv/versions/3.12.0/bin/python /Users/aatikasha
+ikh/Desktop/CAR_MuSC/tests/test_02_single_agent.py
+=============================================
+TEST 02 — Single Agent Navigation
+=============================================
+Final HGF value:  0.5157  (expect > 0.5)
+Steps taken:      174       (expect < 200)
+Stayed in bounds: True   (expect True)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_02_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatika
+shaikh/.pyenv/versions/3.12.0/bin/python /Users/aatikasha
+ikh/Desktop/CAR_MuSC/tests/test_03_car_boost.py
+Running unmodified MuSC (σ=0.4)…
+Running CAR-MuSC       (σ=0.2)…
+==================================================
+TEST 03 — A Priori Hypothesis: CAR Navigation Advantage
+==================================================
+Hypothesis: CAR-MuSC arrives faster with lower variance than unmodified
+--------------------------------------------------
+Mean steps unmodified: 26.1 ± 3.3
+Mean steps CAR:        25.9 ± 2.2
+H1 — CAR variance reduced:     2.2 vs 3.3  (expect CAR std < unmod std)
+Note: mean arrival difference 0.2 steps — not claimed as significant
+H2 — CAR less variable:        True   (expect True)
+Targeting index unmod:         100.0%
+Targeting index CAR:           100.0%
+
+Variance hypothesis SUPPORTED ✓ — CAR-MuSC demonstrates reduced navigational variance consistent with improved directional persistence
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_03_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatika
+shaikh/.pyenv/versions/3.12.0/bin/python /Users/aatikasha
+ikh/Desktop/CAR_MuSC/tests/test_05_repair.py
+==================================================
+TEST 05 — Repair Feedback
+==================================================
+Initial damage at agent: 1.0000
+Final damage at agent:   0.2500
+Damage decreases:        True   (expect True)
+No negative damage:      True   (expect True)
+Total zone reduced:      True   (expect True)
+Zone damage: 331.00 → 330.25
+
+All checks PASSED ✓
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatika
+shaikh/.pyenv/versions/3.12.0/bin/python /Users/aatikasha
+ikh/Desktop/CAR_MuSC/tests/test_07_metrics.py
+Running 10 simulations per condition...
+  Run 1/10... CAR ti=79.0%  Unmod ti=55.0%
+  Run 2/10... CAR ti=73.0%  Unmod ti=59.0%
+  Run 3/10... CAR ti=78.0%  Unmod ti=51.0%
+  Run 4/10... CAR ti=73.0%  Unmod ti=53.0%
+  Run 5/10... CAR ti=82.0%  Unmod ti=51.0%
+  Run 6/10... CAR ti=86.0%  Unmod ti=52.0%
+  Run 7/10... CAR ti=78.0%  Unmod ti=53.0%
+  Run 8/10... CAR ti=80.0%  Unmod ti=56.0%
+  Run 9/10... CAR ti=80.0%  Unmod ti=55.0%
+  Run 10/10... CAR ti=77.0%  Unmod ti=54.0%
+============================================================
+TEST 07 — Metrics Validation (10 Runs)
+============================================================
+CAR targeting mean ± std:   78.6 ± 3.7%
+Unmod targeting mean ± std: 53.9 ± 2.3%
+Effect size (CAR - Unmod): +24.7 pp  (expect > 3.0)
+CAR wins (10/10 runs):      True  (expect >= 7/10)
+CAR mean arrival step:     72.9  vs unmod 102.5
+CAR arrives faster/equal:  True  (expect True)
+Targeting in range [40,80]: True  (expect True)
+
+All checks PASSED ✓
+Plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/tests/test_07_output.png
+
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % /Users/aatikashaikh/.pyenv/versions/3.12.0/bin/pytho
+n /Users/aatikashaikh/Desktop/CAR_MuSC/simulation/sensitivity.py
+Running sensitivity analysis…
+  Testing σ_CAR = 0.15… CAR 78.8% vs Unmod 54.1%  (CAR wins 20/20)
+  Testing σ_CAR = 0.20… CAR 76.2% vs Unmod 54.1%  (CAR wins 20/20)
+  Testing σ_CAR = 0.25… CAR 70.0% vs Unmod 54.1%  (CAR wins 20/20)
+  Testing σ_CAR = 0.30… CAR 65.8% vs Unmod 54.1%  (CAR wins 20/20)
+=================================================================
+SENSITIVITY ANALYSIS — σ_CAR sweep
+=================================================================
+σ_CAR     CAR targeting  Unmod targeting   Advantage   CAR wins
+-----------------------------------------------------------------
+0.15       78.8 ± 3.7       54.1 ± 3.5       +24.7pp     20/20
+0.20       76.2 ± 4.4       54.1 ± 3.5       +22.1pp     20/20
+0.25       70.0 ± 4.5       54.1 ± 3.5       +15.8pp     20/20
+0.30       65.8 ± 3.4       54.1 ± 3.5       +11.7pp     20/20
+=================================================================
+
+CAR outperforms at all σ values: True  (expect True)
+✓ Result is robust to σ_CAR assumption — null hypothesis rejected across full parameter range.
+Sensitivity plot saved → /Users/aatikashaikh/Desktop/CAR_MuSC/simulation/sensitivity_output.png
+aatikashaikh@aatikas-MacBook-Air CAR_MuSC % 

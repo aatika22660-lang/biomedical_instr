@@ -12,6 +12,11 @@ the noise sigma passed at construction — isolating receptor-mediated
 navigation as the independent variable.
 """
 
+import os
+import sys
+# Add project root to sys.path to allow absolute imports from 'simulation' package
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
 from simulation.config import (
     GRID_SIZE, HGF_THRESHOLD, ENGRAFT_SUCCESS_RATE,
